@@ -74,3 +74,16 @@ The replay must be:
 ## Uninstall
 
 With these installation steps, you only will have to stop the Docker containers and remove the two images to clean everything of your machine.
+
+
+
+## Scraping data
+
+The practical objective of this project is to access online cooking recipes and store them in Elasticsearch for searching purpose.
+
+So firstly we are going to scrap data from the web [Allrecipes](https://www.allrecipes.com). And we are going to limit our scope to the *dinner* category.
+
+We will also be creating a strict schema; or mapping, in case of ES; so that we can make sure that data is being indexed in correct format and type.
+
+For this first step we are going to use our `scrapper.py` module, which correctly prepare the information into JSON format to easily manage it with Elasticsearch. 
+
