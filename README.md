@@ -4,7 +4,7 @@ A search engine project based on Elasticsearch for academic demonstrative use.
 
 
 
-## Use
+## Set up of the project stuff
 
 The only one dependency for this project is to have Docker installed in your machine, so all the processes run into Docker containers. See the official [Docker installation instructions](https://docs.docker.com/engine/install).
 
@@ -33,14 +33,42 @@ On the other hand, this project implements a client for the management of the El
 Firstly you have to build the client dockerization. To do it, run:
 
 ```sh
-docker build . -f ./client.dockerfile -t elasticsearch-client
+docker build . -f ./client.dockerfile -t elasticsearch-snack-client
 ```
 
 Now you can start a container with the necessary stuff to work against our Elasticsearch server. Use:
 
 ```sh
-docker run -ti elasticsearch-client
+docker run -ti elasticsearch-snack-client
 ```
+
+### Check the environment
+
+```sh
+docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.7.0  # Start the server
+docker run -ti elasticsearch-snack-client  # In other terminal, start the client
+```
+
+In the shell prompt opened after start the client session, use:
+
+```sh
+python
+```
+
+And in the Python console opened, use:
+
+```python
+from elasticsearch import Elasticsearch
+es=Elasticsearch([{'host': 'localhost', 'port': 9200}])
+es
+```
+
+The replay must be:
+
+```python
+<Elasticsearch([{'host': 'localhost', 'port': 9200}])>
+```
+
 
 
 ## Uninstall
