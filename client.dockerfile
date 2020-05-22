@@ -16,10 +16,10 @@ MAINTAINER Borja González Seoane <borja.gseoane@udc.es>
 
 WORKDIR $HOME/work/
 
-# Install Python Elasticsearch 7.7.0 manager
-RUN pip install elasticsearch==7.7.0
-
 # Copy necessary stuff from local
 ADD . $WORKDIR
+
+# Install all the neccesary Python libraries. One is Elasticsearch 7.7.0
+RUN pip install -r requirements.txt
 
 CMD ["/bin/bash"]
