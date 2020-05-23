@@ -24,9 +24,10 @@ from elasticsearch_snack.properties import INDEX_NAME, \
     RECIPES_COLLECTION_FILENAME
 
 
-def connect_elasticsearch():
+def connect_elasticsearch() -> Elasticsearch:
     """This function starts and verifies the connection with Elasticsearch
 
+    :return: the Elasticsearch object instance
     :raise ConnectionError: if Elasticsearch is unreachable
     """
     es = Elasticsearch(host='elasticsearch-snack-server',
@@ -38,7 +39,7 @@ def connect_elasticsearch():
     return es
 
 
-def create_snack_recipes_index(es_object):
+def create_snack_recipes_index(es_object: Elasticsearch) -> None:
     """This function creates an Elasticsearch index to store Allrecipes recipes
 
     This function creates an index to store the scrapped Allrecipes snack
