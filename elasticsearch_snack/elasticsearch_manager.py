@@ -16,8 +16,6 @@
 This module closure a set of functions to manage Elasticsearch.
 """
 
-import logging
-
 from elasticsearch import Elasticsearch
 
 
