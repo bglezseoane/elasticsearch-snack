@@ -28,7 +28,7 @@ def connect_elasticsearch():
     """
     es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
     if es.ping():
-        print('Elasticsearch reachable')
+        print('[OK]: Elasticsearch reachable')
     else:
         raise ConnectionError('Elasticsearch unreachable')
     return es
