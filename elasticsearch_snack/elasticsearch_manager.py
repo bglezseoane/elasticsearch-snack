@@ -51,8 +51,6 @@ def create_snack_recipes_index(es_object: Elasticsearch) -> None:
     :raise Exception: for any error during the creation process
     """
 
-    index_name = 'recipes'
-
     # Index settings
     settings = {
         'settings': {
@@ -81,9 +79,9 @@ def create_snack_recipes_index(es_object: Elasticsearch) -> None:
     }
 
     try:
-        if not es_object.indices.exists(index_name):
+        if not es_object.indices.exists(INDEX_NAME):
             # Ignore 400 to ignore "Index already exist" error
-            es_object.indices.create(index=index_name,
+            es_object.indices.create(index=INDEX_NAME,
                                      ignore=400,
                                      body=settings)
             print('[OK]: Index created')
