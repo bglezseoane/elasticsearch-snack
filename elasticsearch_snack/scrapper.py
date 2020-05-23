@@ -23,6 +23,9 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 
+from elasticsearch_snack.properties import ALLRECIPES_SNACKS_PAGE_URL, \
+    RECIPES_COLLECTION_FILENAME
+
 
 def scrap_allrecipes_recipe(url: str) -> json:
     """This function scraps a recipe of Allrecipes, given its URL,
@@ -104,9 +107,7 @@ def scrap_allrecipes_snack_recipes() -> None:
             with open(filename, 'x') as f:
                 json.dump(new_data, f, indent=4)
 
-    filename = 'data-collection.json'  # The file to store the scrapped data
-    url = 'https://www.allrecipes.com/recipes/76/appetizers-and-snacks/'
-    request = requests.get(url)
+    request = requests.get(ALLRECIPES_SNACKS_PAGE_URL)
     if request.ok:
         html = request.text
         soup = BeautifulSoup(html, 'lxml')
@@ -117,4 +118,4 @@ def scrap_allrecipes_snack_recipes() -> None:
             sleep(2)
             scrapped_texts.append(scrap_allrecipes_recipe(link['href']))
 
-        append_json(scrapped_texts, filename)
+        append_json(scrapped_texts, RECIPES_COLLECTION_FILENAME)
