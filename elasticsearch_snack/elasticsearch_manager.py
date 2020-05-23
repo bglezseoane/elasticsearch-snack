@@ -16,7 +16,12 @@
 This module closure a set of functions to manage Elasticsearch.
 """
 
+import json
+
 from elasticsearch import Elasticsearch
+
+from elasticsearch_snack.properties import INDEX_NAME, \
+    RECIPES_COLLECTION_FILENAME
 
 
 def connect_elasticsearch():
@@ -82,3 +87,21 @@ def create_snack_recipes_index(es_object):
             print('[OK]: Index created')
     except Exception:
         raise Exception('Error during the index creation process')
+
+
+def index_snack_recipes(es_object: Elasticsearch) -> None:
+    """Index scrapped Allrecipes snack recipes
+
+    This function index the scrapped and saved to a JSON file Allrecipes
+    snack recipes to an Elasticsearch "recipes" index.
+
+    :param es_object: the Elasticsearch object instance
+    """
+    with open(RECIPES_COLLECTION_FILENAME, 'rb') as f:
+        recipes = json.load(f)
+
+    try:
+        for recipe in recipes:
+            es_object.index(index=INDEX_NAME, body=recipe)
+    except Exception:
+        raise Exception('Error in indexing data')

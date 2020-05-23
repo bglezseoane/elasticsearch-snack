@@ -24,3 +24,6 @@ ALLRECIPES_SNACKS_PAGE_URL = 'https://www.allrecipes.com/recipes/76' \
 
 # The file to store the scrapped data
 RECIPES_COLLECTION_FILENAME = os.path.normpath('../recipes-collection.json')
+
+# The name of the index where store the snack recipes on Elasticsearch
+INDEX_NAME = 'recipes'
