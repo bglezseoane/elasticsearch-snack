@@ -80,8 +80,10 @@ def scrap_allrecipes_recipe(url: str) -> json:
                       'description': description,
                       'ingredients': ingredients,
                       'nutrition': nutrition}
+        else:
+            raise ConnectionError('Exception trying yo connect with Allrecipes')
     except Exception:
-        raise ConnectionError('Exception while parsing')
+        raise Exception('Exception while parsing')
     finally:
         return json.dumps(recipe)
 
@@ -119,3 +121,6 @@ def scrap_allrecipes_snack_recipes() -> None:
             scrapped_texts.append(scrap_allrecipes_recipe(link['href']))
 
         append_json(scrapped_texts, RECIPES_COLLECTION_FILENAME)
+    else:
+        raise ConnectionError('Exception trying yo connect with Allrecipes')
+
