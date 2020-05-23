@@ -11,7 +11,7 @@
 # Contact: borja.gseoane@udc.es
 ###########################################################
 
-"""Scrap script
+"""Scrap module
 
 This module closure the scrapper to scraps online a collection of data of
 Allrecipes and prepare it as JSON format to save into Elasticsearch.
@@ -19,7 +19,6 @@ Allrecipes and prepare it as JSON format to save into Elasticsearch.
 
 import json
 from time import sleep
-from typing import Dict
 
 import requests
 from bs4 import BeautifulSoup
@@ -45,7 +44,6 @@ def scrap_allrecipes_recipe(url: str) -> json:
 
     try:
         request = requests.get(url)
-
         if request.ok:
             html = request.text
             soup = BeautifulSoup(html, 'lxml')
@@ -97,13 +95,13 @@ def scrap_allrecipes_snack_recipes() -> None:
         """Function to append more data to a JSON file"""
         merged_data = []
         try:
-            with open(filename, "rb") as f:
+            with open(filename, 'rb') as f:
                 merged_data.append(json.load(f))
             merged_data.append(new_data)
-            with open(filename, "w") as f:
+            with open(filename, 'w') as f:
                 json.dump(merged_data, f, indent=4)
         except FileNotFoundError:
-            with open(filename, "x") as f:
+            with open(filename, 'x') as f:
                 json.dump(new_data, f, indent=4)
 
     filename = 'data-collection.json'  # The file to store the scrapped data
