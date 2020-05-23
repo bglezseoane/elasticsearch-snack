@@ -18,18 +18,18 @@ Allrecipes and prepare it as JSON format to save into Elasticsearch.
 """
 
 import json
+from time import sleep
 from typing import Dict
 
 import requests
 from bs4 import BeautifulSoup
 
 
-def scrap(url: str, headers: Dict[str, str]) -> json:
+def scrap_allrecipes_recipe(url: str) -> json:
     """This function scraps a recipe of Allrecipes, given its URL,
     and prepare a JSON file to index in Elasticsearch.
 
     :param url: the URL of the recipe
-    :param headers: the headers to prepare the request
     :return: the recipe as JSON
     :raise: ConnectionError, if the connection against Allrecipes crashes
     """
@@ -44,7 +44,7 @@ def scrap(url: str, headers: Dict[str, str]) -> json:
     recipe = dict()
 
     try:
-        request = requests.get(url, headers=headers)
+        request = requests.get(url)
 
         if request.ok:
             html = request.text
@@ -83,3 +83,40 @@ def scrap(url: str, headers: Dict[str, str]) -> json:
         raise ConnectionError('Exception while parsing')
     finally:
         return json.dumps(recipe)
+
+
+def scrap_allrecipes_snack_recipes() -> None:
+    """This function scraps all the snack recipes of Allrecipes and saves
+    the information to a JSON file to index in Elasticsearch.
+
+    :raise: ConnectionError, if the connection against Allrecipes crashes
+    """
+
+    # noinspection PyShadowingNames
+    def append_json(new_data: json, filename: str) -> None:
+        """Function to append more data to a JSON file"""
+        merged_data = []
+        try:
+            with open(filename, "rb") as f:
+                merged_data.append(json.load(f))
+            merged_data.append(new_data)
+            with open(filename, "w") as f:
+                json.dump(merged_data, f, indent=4)
+        except FileNotFoundError:
+            with open(filename, "x") as f:
+                json.dump(new_data, f, indent=4)
+
+    filename = 'data-collection.json'  # The file to store the scrapped data
+    url = 'https://www.allrecipes.com/recipes/76/appetizers-and-snacks/'
+    request = requests.get(url)
+    if request.ok:
+        html = request.text
+        soup = BeautifulSoup(html, 'lxml')
+        links = soup.select('.fixed-recipe-card__h3 a')
+
+        scrapped_texts = []
+        for link in links:
+            sleep(2)
+            scrapped_texts.append(scrap_allrecipes_recipe(link['href']))
+
+        append_json(scrapped_texts, filename)
