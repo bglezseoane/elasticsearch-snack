@@ -105,3 +105,13 @@ def index_snack_recipes(es_object: Elasticsearch) -> None:
             es_object.index(index=INDEX_NAME, body=recipe)
     except Exception:
         raise Exception('Error in indexing data')
+
+
+def search(es_object: Elasticsearch, search_object: str):
+    """Run a search on a Elasticsearch instance
+
+    :param es_object: the Elasticsearch object instance
+    :param search_object: the query ro run
+    :return: the result of the query
+    """
+    return es_object.search(index=INDEX_NAME, body=search_object)
