@@ -17,10 +17,16 @@ First, you need to pull the Elasticsearch official dockerization:
 docker pull docker.elastic.co/elasticsearch/elasticsearch:7.7.0
 ```
 
+The second step is to create a Docker network to connect our two containers. You can do ir as:
+
+```sh
+docker network create elasticsearch-snack
+```
+
 Then, to run a Docker container with an Elasticsearch execution you have to order:
 
 ```sh
-docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+docker run --rm -d --net elasticsearch-snack -p 9200:9200 -e "discovery.type=single-node" --name elasticsearch-snack-server docker.elastic.co/elasticsearch/elasticsearch:7.7.0
 ```
 
 With this an Elasticsearch engine will be running on your local machine and you will can access it with the port 9200. You can test it using a browser and going to the url `http://localhost:9200`.
@@ -39,14 +45,15 @@ docker build . -f ./client.dockerfile -t elasticsearch-snack-client
 Now you can start a container with the necessary stuff to work against our Elasticsearch server. Use:
 
 ```sh
-docker run -ti elasticsearch-snack-client
+docker run --rm -it --net elasticsearch-snack --name elasticsearch-snack-client elasticsearch-snack-client
 ```
 
 ### Check the environment
 
 ```sh
-docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.7.0  # Start the server
-docker run -ti elasticsearch-snack-client  # In other terminal, start the client
+docker run --rm -d --net elasticsearch-snack -p 9200:9200 -e "discovery.type=single-node" --name elasticsearch-snack-server docker.elastic.co/elasticsearch/elasticsearch:7.7.0  # Start the server
+docker run --rm -it --net elasticsearch-snack --name elasticsearch-snack-client elasticsearch-snack-client
+  # Start the client
 ```
 
 In the shell prompt opened after start the client session, use:
@@ -59,7 +66,7 @@ And in the Python console opened, use:
 
 ```python
 from elasticsearch import Elasticsearch
-es=Elasticsearch([{'host': 'localhost', 'port': 9200}])
+es = Elasticsearch(host='elasticsearch-snack-server', port=9200)
 es
 ```
 

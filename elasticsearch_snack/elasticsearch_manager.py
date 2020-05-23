@@ -29,7 +29,8 @@ def connect_elasticsearch():
 
     :raise ConnectionError: if Elasticsearch is unreachable
     """
-    es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+    es = Elasticsearch(host='elasticsearch-snack-server',
+                       port=9200)
     if es.ping():
         print('[OK]: Elasticsearch reachable')
     else:
