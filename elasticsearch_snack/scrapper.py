@@ -11,19 +11,21 @@
 # Contact: borja.gseoane@udc.es
 ###########################################################
 
-""" Scrap script
+"""Scrap script
 
 This module closure the scrapper to scraps online a collection of data of
-Allrecipes and prepare it as JSON format to insire into Elasticsearch.
+Allrecipes and prepare it as JSON format to save into Elasticsearch.
 """
 
 import json
+from typing import Dict
+
 import requests
 from bs4 import BeautifulSoup
 
 
-def scrap(url: str, headers: str) -> json:
-    """ This function scraps a recipe of Allrecipes, given its URL,
+def scrap(url: str, headers: Dict[str, str]) -> json:
+    """This function scraps a recipe of Allrecipes, given its URL,
     and prepare a JSON file to index in Elasticsearch.
 
     :param url: the URL of the recipe
@@ -36,54 +38,47 @@ def scrap(url: str, headers: str) -> json:
     title = ''
     description = ''
     ingredients = []
-    calories = 0
-    submit_by = ''
+    nutrition = ''
 
     # Recipe dictionary
     recipe = dict()
 
     try:
-        r = requests.get(url, headers=headers)
+        request = requests.get(url, headers=headers)
 
-        if r.status_code == 200:
-            html = r.text
+        if request.ok:
+            html = request.text
             soup = BeautifulSoup(html, 'lxml')
             # Title
-            title_section = soup.select('.recipe-summary__h1')
+            title_section = soup.select('h1')
             # Description
-            description_section = soup.select('.submitter__description')
+            description_section = soup.select('.recipe-summary p')
             # Ingredients
-            ingredients_section = soup.select('.recipe-ingred_txt')
+            ingredients_section = soup.select('.ingredients-section')
             # Calories
-            calories_section = soup.select('.calorie-count')
-            # Submitter
-            submitter_section = soup.select('.submitter__name')
+            nutrition_section = soup.select('.recipe-nutrition-section')
 
             # Pass the data
             if title_section:
                 title = title_section[0].text
 
             if description_section:
-                description = description_section[0].text.strip().replace('"',
-                                                                          '')
+                description = description_section[0].text.strip()
+
             if ingredients_section:
                 for ingredient in ingredients_section:
                     ingredient_text = ingredient.text.strip()
                     if 'Add all ingredients to list' not in ingredient_text \
                             and ingredient_text != '':
-                        ingredients.append({'step': ingredient.text.strip()})
+                        ingredients.append(ingredient.text.strip())
 
-            if calories_section:
-                calories = calories_section[0].text.replace('cals', '').strip()
-
-            if submitter_section:
-                submit_by = submitter_section[0].text.strip()
+            if nutrition_section:
+                nutrition = nutrition_section[0].text.strip()
 
             recipe = {'title': title,
                       'description': description,
                       'ingredients': ingredients,
-                      'calories': calories,
-                      'submitter': submit_by}
+                      'nutrition': nutrition}
     except Exception:
         raise ConnectionError('Exception while parsing')
     finally:
