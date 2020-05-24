@@ -18,6 +18,7 @@ Allrecipes and prepare it as JSON format to save into Elasticsearch.
 """
 
 import json
+import re
 from time import sleep
 
 import requests
@@ -44,7 +45,7 @@ def scrap_allrecipes_recipe(url: str) -> json:
     title = ''
     description = ''
     ingredients = []
-    nutrition = ''
+    calories = 0
 
     # Recipe dictionary
     recipe = dict()
@@ -84,13 +85,13 @@ def scrap_allrecipes_recipe(url: str) -> json:
                     ingredients.append(ingredient)
 
             if nutrition_section:
-                nutrition = filter_noisy_chars(
-                    nutrition_section[0].text)
+                nutrition_info = filter_noisy_chars(nutrition_section[0].text)
+                calories = re.findall(r'(\d+) calories', nutrition_info)[0]
 
             recipe = {'title': title,
                       'description': description,
                       'ingredients': ingredients,
-                      'nutrition': nutrition}
+                      'calories': calories}
         else:
             raise ConnectionError('Exception trying yo connect with Allrecipes')
     except Exception:
@@ -130,4 +131,3 @@ def scrap_allrecipes_snack_recipes() -> None:
         save_json(scrapped_texts, RECIPES_COLLECTION_FILENAME)
     else:
         raise ConnectionError('Exception trying yo connect with Allrecipes')
-

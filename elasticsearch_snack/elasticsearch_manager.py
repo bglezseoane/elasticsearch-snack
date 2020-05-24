@@ -70,8 +70,8 @@ def create_snack_recipes_index(es_object: Elasticsearch) -> None:
                     'ingredients': {
                         'type': 'text'
                     },
-                    'nutrition': {
-                        'type': 'text'
+                    'calories': {
+                        'type': 'integer'
                     },
                 }
             }
