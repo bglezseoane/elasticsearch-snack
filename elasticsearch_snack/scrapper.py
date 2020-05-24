@@ -36,6 +36,10 @@ def scrap_allrecipes_recipe(url: str) -> json:
     :raise: ConnectionError, if the connection against Allrecipes crashes
     """
 
+    def filter_noisy_chars(text: str) -> str:
+        """Filter in a text new line symbols and excessive spaces"""
+        return text.replace('\n', '').replace('  ', '').strip()
+
     # Data schema
     title = ''
     description = ''
@@ -61,10 +65,11 @@ def scrap_allrecipes_recipe(url: str) -> json:
 
             # Pass the data
             if title_section:
-                title = title_section[0].text
+                title = filter_noisy_chars(title_section[0].text)
 
             if description_section:
-                description = description_section[0].text.strip()
+                description = filter_noisy_chars(
+                    description_section[0].text)
 
             if ingredients_section:
                 for ingredient in ingredients_section:
@@ -74,7 +79,8 @@ def scrap_allrecipes_recipe(url: str) -> json:
                         ingredients.append(ingredient.text.strip())
 
             if nutrition_section:
-                nutrition = nutrition_section[0].text.strip()
+                nutrition = filter_noisy_chars(
+                    nutrition_section[0].text)
 
             recipe = {'title': title,
                       'description': description,
