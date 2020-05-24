@@ -69,13 +69,10 @@ def scrap_allrecipes_recipe(url: str) -> json:
                 title = filter_noisy_chars(title_section[0].text)
 
             if description_section:
-                description = filter_noisy_chars(
-                    description_section[0].text)
+                description = filter_noisy_chars(description_section[0].text)
 
             if ingredients_section:
                 ingredient_list = ingredients_section[0].text.split('\n')
-                """This scrapped section contains a lot of noise and needs 
-                an especial preprocess"""
                 ingredient_list = [filter_noisy_chars(i)
                                    for i in ingredient_list]
                 # Remove nulls
