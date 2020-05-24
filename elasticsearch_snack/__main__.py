@@ -33,4 +33,7 @@ if __name__ == '__main__':
     # Prepare a query to search a "Bruschetta" recipe and print the results
     search_object = {'query': {'match': {'title': 'Bruschetta'}}}
     results = search(es, json.dumps(search_object))
-    print(results)
+    results = results['hits']['hits']  # Access results ignoring metadata
+
+    for result in results:
+        print(result['_source']['title'])
