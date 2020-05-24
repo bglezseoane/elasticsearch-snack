@@ -96,17 +96,13 @@ def scrap_allrecipes_snack_recipes() -> None:
     """
 
     # noinspection PyShadowingNames
-    def append_json(new_data: json, filename: str) -> None:
-        """Function to append more data to a JSON file"""
-        merged_data = []
+    def save_json(new_data: json, filename: str) -> None:
+        """Function to save data to a JSON file, overwriting it if exists"""
         try:
-            with open(filename, 'rb') as f:
-                merged_data.append(json.load(f))
-            merged_data.append(new_data)
-            with open(filename, 'w') as f:
-                json.dump(merged_data, f, indent=4)
-        except FileNotFoundError:
             with open(filename, 'x') as f:
+                json.dump(new_data, f, indent=4)
+        except FileExistsError:
+            with open(filename, 'w') as f:
                 json.dump(new_data, f, indent=4)
 
     request = requests.get(ALLRECIPES_SNACKS_PAGE_URL)
@@ -120,7 +116,7 @@ def scrap_allrecipes_snack_recipes() -> None:
             sleep(2)
             scrapped_texts.append(scrap_allrecipes_recipe(link['href']))
 
-        append_json(scrapped_texts, RECIPES_COLLECTION_FILENAME)
+        save_json(scrapped_texts, RECIPES_COLLECTION_FILENAME)
     else:
         raise ConnectionError('Exception trying yo connect with Allrecipes')
 
