@@ -72,11 +72,16 @@ def scrap_allrecipes_recipe(url: str) -> json:
                     description_section[0].text)
 
             if ingredients_section:
-                for ingredient in ingredients_section:
-                    ingredient_text = ingredient.text.strip()
-                    if 'Add all ingredients to list' not in ingredient_text \
-                            and ingredient_text != '':
-                        ingredients.append(ingredient.text.strip())
+                ingredient_list = ingredients_section[0].text.split('\n')
+                """This scrapped section contains a lot of noise and needs 
+                an especial preprocess"""
+                ingredient_list = [filter_noisy_chars(i)
+                                   for i in ingredient_list]
+                # Remove nulls
+                ingredient_list = [i for i in ingredient_list if i]
+
+                for ingredient in ingredient_list:
+                    ingredients.append(ingredient)
 
             if nutrition_section:
                 nutrition = filter_noisy_chars(
