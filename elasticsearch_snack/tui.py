@@ -39,6 +39,7 @@ def print_main_menu() -> None:
     """Prints the main menu"""
     print(f'\n{BLUE}****************************************{RST_COLOR}')
     print('Available actions:')
+    print(f'    * {CYAN}c{RST_COLOR}: (Re)Conect to Elasticsearch server')
     print(f'    * {CYAN}d{RST_COLOR}: Download the data collection from '
           f'Allrecipes')
     print(f'    * {CYAN}i{RST_COLOR}: Reindex the data collection on '
@@ -85,6 +86,16 @@ def run_opt(opt: str, es_object: Elasticsearch) -> None:
     """
     if opt == 'q':
         sys.exit(0)  # Finish
+    elif opt == 'c':
+        try:
+            print(f'Connecting to the Elasticsearch server using the host '
+                  f'\'{ELASTICSEARCH_SERVER_HOST}\'...')
+            es = connect_elasticsearch()
+            print(f'{GREEN}[OK]:{RST_COLOR} Connected to Elasticsearch')
+        except ConnectionError:
+            print(f'{RED}[ERROR]:{RST_COLOR} Elasticsearch unreachable now. '
+                  f'Have you turn off the server? Reconnect it and try again '
+                  f'this order.')
     elif opt == 'd':
         print('Downloading data... This process may take a while')
         scrap_allrecipes_snack_recipes()
@@ -278,7 +289,7 @@ def start_tui() -> None:
     """
 
     # The possible options to run by the user
-    possible_opts = ['d', 'i', 's', 'q']
+    possible_opts = ['c', 'd', 'i', 's', 'q']
 
     print(f'{BLUE}Welcome to Elasticsearch Snack!{RST_COLOR}')
 
