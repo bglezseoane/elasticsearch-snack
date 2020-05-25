@@ -84,6 +84,7 @@ def scrap_allrecipes_recipe(url: str) -> json:
             if nutrition_section:
                 nutrition_info = filter_noisy_chars(nutrition_section[0].text)
                 calories = re.findall(r'(\d+) calories', nutrition_info)[0]
+                calories = int(calories)
 
             recipe = {'title': title,
                       'description': description,
