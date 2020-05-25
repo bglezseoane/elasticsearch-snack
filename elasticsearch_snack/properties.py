@@ -19,6 +19,7 @@ them in the rest of the code.
 
 import os
 
+# The URL of the source of the data collection
 ALLRECIPES_SNACKS_PAGE_URL = 'https://www.allrecipes.com/recipes/76' \
                              '/appetizers-and-snacks/'
 
