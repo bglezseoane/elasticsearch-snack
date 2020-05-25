@@ -17,6 +17,7 @@ This module closure a set of functions to manage Elasticsearch.
 """
 
 import json
+from typing import Dict
 
 from elasticsearch import Elasticsearch
 
@@ -92,6 +93,7 @@ def index_snack_recipes(es_object: Elasticsearch) -> None:
     snack recipes to an Elasticsearch "recipes" index.
 
     :param es_object: the Elasticsearch object instance
+    :raise Exception: for any error during the indexation process
     """
     with open(RECIPES_COLLECTION_FILENAME, 'rb') as f:
         recipes = json.load(f)
@@ -103,7 +105,7 @@ def index_snack_recipes(es_object: Elasticsearch) -> None:
         raise Exception('Error in indexing data')
 
 
-def search(es_object: Elasticsearch, search_object: str):
+def search(es_object: Elasticsearch, search_object: Dict) -> Dict:
     """Run a search on a Elasticsearch instance
 
     :param es_object: the Elasticsearch object instance
