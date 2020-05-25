@@ -23,6 +23,9 @@ import os
 ALLRECIPES_SNACKS_PAGE_URL = 'https://www.allrecipes.com/recipes/76' \
                              '/appetizers-and-snacks/'
 
+# The host where the Elasticsearch is run locally
+ELASTICSEARCH_SERVER_HOST = 'elasticsearch-snack-server:9200'
+
 # The file to store the scrapped data
 RECIPES_COLLECTION_FILENAME = os.path.normpath('../recipes-collection.json')
 

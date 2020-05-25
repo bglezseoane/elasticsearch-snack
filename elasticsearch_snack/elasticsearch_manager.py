@@ -21,7 +21,7 @@ import json
 from elasticsearch import Elasticsearch
 
 from elasticsearch_snack.properties import INDEX_NAME, \
-    RECIPES_COLLECTION_FILENAME
+    RECIPES_COLLECTION_FILENAME, ELASTICSEARCH_SERVER_HOST
 
 
 def connect_elasticsearch() -> Elasticsearch:
@@ -30,11 +30,10 @@ def connect_elasticsearch() -> Elasticsearch:
     :return: the Elasticsearch object instance
     :raise ConnectionError: if Elasticsearch is unreachable
     """
-    es = Elasticsearch(host='elasticsearch-snack-server',
-                       port=9200)
     if es.ping():
         print('[OK]: Elasticsearch reachable')
     else:
+    es = Elasticsearch(ELASTICSEARCH_SERVER_HOST)
         raise ConnectionError('Elasticsearch unreachable')
     return es
 
