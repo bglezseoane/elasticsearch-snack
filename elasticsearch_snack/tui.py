@@ -42,7 +42,7 @@ def print_main_menu() -> None:
     print(f'    * {CYAN}c{RST_COLOR}: (Re)Conect to Elasticsearch server')
     print(f'    * {CYAN}d{RST_COLOR}: Download the data collection from '
           f'Allrecipes')
-    print(f'    * {CYAN}i{RST_COLOR}: Reindex the data collection on '
+    print(f'    * {CYAN}i{RST_COLOR}: (Re)Index the data collection on '
           f'Elasticsearch')
     print(f'    * {CYAN}s{RST_COLOR}: Search something')
     print(f'    * {CYAN}q{RST_COLOR}: Quit')
