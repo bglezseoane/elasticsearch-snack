@@ -30,10 +30,8 @@ def connect_elasticsearch() -> Elasticsearch:
     :return: the Elasticsearch object instance
     :raise ConnectionError: if Elasticsearch is unreachable
     """
-    if es.ping():
-        print('[OK]: Elasticsearch reachable')
-    else:
     es = Elasticsearch(ELASTICSEARCH_SERVER_HOST)
+    if not es.ping():
         raise ConnectionError('Elasticsearch unreachable')
     return es
 
@@ -83,7 +81,6 @@ def create_snack_recipes_index(es_object: Elasticsearch) -> None:
             es_object.indices.create(index=INDEX_NAME,
                                      ignore=400,
                                      body=settings)
-            print('[OK]: Index created')
     except Exception:
         raise Exception('Error during the index creation process')
 
