@@ -55,6 +55,8 @@ def print_search_menu() -> None:
     print(f'    * {CYAN}d{RST_COLOR}: Set description keywords to match')
     print(f'    * {CYAN}i{RST_COLOR}: Set ingredients to match')
     print(f'    * {CYAN}c{RST_COLOR}: Set the maximum of calories to filter')
+    print(f'    * {CYAN}a{RST_COLOR}: Print the title of all the available '
+          f'recipes')
     print(f'    * {CYAN}r{RST_COLOR}: Run the search')
     print(f'    * {CYAN}b{RST_COLOR}: Return to the main menu')
 
@@ -115,7 +117,7 @@ def run_search(es_object: Elasticsearch) -> None:
     :param es_object: the Elasticsearch object instance
     :raise SyntaxError: if the option is illegal.
     """
-    possible_opts = ['t', 'd', 'i', 'c', 'r', 'b']
+    possible_opts = ['t', 'd', 'i', 'c', 'a', 'r', 'b']
 
     try:
         es_object.ping()  # Check connection
@@ -134,6 +136,21 @@ def run_search(es_object: Elasticsearch) -> None:
                 return  # Go back
             elif opt == 'r':
                 break  # Continue
+            elif opt == 'a':
+                # Run the search
+                res = search(es_object, {'query': {"match_all": {}},
+                                         'size': 100})  # Default is only 10
+
+                # Access results ignoring metadata
+                res = res['hits']['hits']
+                print(f'{GREEN}[OK]:{RST_COLOR} Success search')
+                print('Showing all recipes:')
+                print(f'\n{GREEN}>>>>>>>>>>{RST_COLOR}')
+                if res:
+                    for r in res:
+                        print(f"    * {r['_source']['title']}")
+                print(f'{GREEN}<<<<<<<<<<{RST_COLOR}\n')
+                input('Input anything to continue... ')
             elif opt == 't':
                 title = input('Input the desired title to search: ')
             elif opt == 'd':
