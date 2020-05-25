@@ -27,31 +27,36 @@ from elasticsearch_snack.scrapper import scrap_allrecipes_snack_recipes
 
 # Print style macros
 BLUE = '\033[94m'
+CYAN = '\033[96m'
 GREEN = '\033[92m'
+MAGENTA = '\033[95m'
 RED = '\033[91m'
+YELLOW = '\033[93m'
 RST_COLOR = '\033[0m'
 
 
 def print_main_menu() -> None:
     """Prints the main menu"""
-    print('\nAvailable actions:')
-    print(f'    * {BLUE}d{RST_COLOR}: Download the data collection from '
+    print(f'\n{BLUE}****************************************{RST_COLOR}')
+    print('Available actions:')
+    print(f'    * {CYAN}d{RST_COLOR}: Download the data collection from '
           f'Allrecipes')
-    print(f'    * {BLUE}i{RST_COLOR}: Reindex the data collection on '
+    print(f'    * {CYAN}i{RST_COLOR}: Reindex the data collection on '
           f'Elasticsearch')
-    print(f'    * {BLUE}s{RST_COLOR}: Search something')
-    print(f'    * {BLUE}q{RST_COLOR}: Quit')
+    print(f'    * {CYAN}s{RST_COLOR}: Search something')
+    print(f'    * {CYAN}q{RST_COLOR}: Quit')
 
 
 def print_search_menu() -> None:
     """Prints the search menu"""
+    print(f'\n{BLUE}*****{RST_COLOR}')
     print('Configuring your search:')
-    print(f'    * {BLUE}t{RST_COLOR}: Set title to match')
-    print(f'    * {BLUE}d{RST_COLOR}: Add description keywords to match')
-    print(f'    * {BLUE}i{RST_COLOR}: Add ingredients to match')
-    print(f'    * {BLUE}c{RST_COLOR}: Set the maximum of calories to filter')
-    print(f'    * {BLUE}r{RST_COLOR}: Run the search')
-    print(f'    * {BLUE}b{RST_COLOR}: Return to the main menu')
+    print(f'    * {CYAN}t{RST_COLOR}: Set title to match')
+    print(f'    * {CYAN}d{RST_COLOR}: Set description keywords to match')
+    print(f'    * {CYAN}i{RST_COLOR}: Set ingredients to match')
+    print(f'    * {CYAN}c{RST_COLOR}: Set the maximum of calories to filter')
+    print(f'    * {CYAN}r{RST_COLOR}: Run the search')
+    print(f'    * {CYAN}b{RST_COLOR}: Return to the main menu')
 
 
 def parse_input_opt(possible_opts: [str]) -> str:
@@ -208,11 +213,15 @@ def run_search(es_object: Elasticsearch) -> None:
 
         # Access results ignoring metadata
         results = res['hits']['hits']
+        print(f'{GREEN}[OK]:{RST_COLOR} Success search')
+        print('Showing results:')
         if results:
             for result in results:
                 print(result['_source']['title'])
+            input('Input anything to continue... ')
         else:
-            print('There are not results to show...')
+            print(f'{YELLOW}[FAIL]:{RST_COLOR} There are not results to '
+                  f'show...')
     except Exception:
         print(f'{RED}[ERROR]:{RST_COLOR} Error during the process. Have you '
               f'connected Elasticsearch? Use option \'c\' to check it.')
