@@ -93,10 +93,14 @@ def index_snack_recipes(es_object: Elasticsearch) -> None:
     snack recipes to an Elasticsearch "recipes" index.
 
     :param es_object: the Elasticsearch object instance
+    :raise FileNotFoundError: if the data collection file is missed
     :raise Exception: for any error during the indexation process
     """
-    with open(RECIPES_COLLECTION_FILENAME, 'rb') as f:
-        recipes = json.load(f)
+    try:
+        with open(RECIPES_COLLECTION_FILENAME, 'rb') as f:
+            recipes = json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(RECIPES_COLLECTION_FILENAME)
 
     try:
         for recipe in recipes:

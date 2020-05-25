@@ -95,6 +95,9 @@ def run_opt(opt: str, es_object: Elasticsearch) -> None:
             print(f'{GREEN}[OK]:{RST_COLOR} Created index to store the data')
             index_snack_recipes(es_object)
             print(f'{GREEN}[OK]:{RST_COLOR} Data indexed')
+        except FileNotFoundError:
+            print(f'{RED}[ERROR]:{RST_COLOR} Error taking the data collection '
+                  f'JSON file. Try to (re)download the data using \'d\'')
         except Exception:
             print(f'{RED}[ERROR]:{RST_COLOR} Error during the process. Have '
                   f'you connected Elasticsearch? Use option \'c\' to check it.')
