@@ -49,7 +49,7 @@ def print_main_menu() -> None:
 
 def print_search_menu() -> None:
     """Prints the search menu"""
-    print(f'\n{BLUE}*****{RST_COLOR}')
+    print(f'\n{BLUE}***************{RST_COLOR}')
     print('Configuring your search:')
     print(f'    * {CYAN}t{RST_COLOR}: Set title to match')
     print(f'    * {CYAN}d{RST_COLOR}: Set description keywords to match')
@@ -232,13 +232,36 @@ def run_search(es_object: Elasticsearch) -> None:
         res = search(es_object, search_object)
 
         # Access results ignoring metadata
-        results = res['hits']['hits']
+        res = res['hits']['hits']
         print(f'{GREEN}[OK]:{RST_COLOR} Success search')
         print('Showing results:')
-        if results:
-            for result in results:
-                print(result['_source']['title'])
-            input('Input anything to continue... ')
+        print(f'\n{GREEN}>>>>>>>>>>{RST_COLOR}')
+        if res:
+            i = 0
+            for r in res:
+                print(f"    {i + 1}. {r['_source']['title']}")
+                i += 1
+            print(f'{GREEN}<<<<<<<<<<{RST_COLOR}\n')
+            sel_inx = input('Input the index number of a recipe to know more, '
+                            'input \'b\' to go back ')
+            if sel_inx == 'b':
+                return
+            else:
+                try:
+                    sel_res = res[int(sel_inx) - 1]
+                    print(f'\n{GREEN}>>>>>>>>>>{RST_COLOR}')
+                    print(sel_res['_source']['title'])
+                    print(sel_res['_source']['description'])
+                    print(f"Ingredients: ")
+                    for i in sel_res['_source']['ingredients']:
+                        print(f'    - {i}')
+                    print(f"Calories: {sel_res['_source']['calories']} kcal")
+                    print(f'\n{GREEN}<<<<<<<<<<{RST_COLOR}')
+                    input('Input anything to continue... ')
+                except IndexError or ValueError:
+                    print(f'{RED}[ERROR]:{RST_COLOR} Bad index format. Use '
+                          f'\'1\' or \'2\'')
+                    return
         else:
             print(f'{YELLOW}[FAIL]:{RST_COLOR} There are not results to '
                   f'show...')
