@@ -246,8 +246,8 @@ def run_search(es_object: Elasticsearch) -> None:
         res = res['hits']['hits']
         print(f'{GREEN}[OK]:{RST_COLOR} Success search')
         print('Showing results:')
-        print(f'\n{GREEN}>>>>>>>>>>{RST_COLOR}')
         if res:
+            print(f'\n{GREEN}>>>>>>>>>>{RST_COLOR}')
             i = 0
             for r in res:
                 print(f"    {i + 1}. {r['_source']['title']}")
