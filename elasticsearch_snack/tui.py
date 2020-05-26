@@ -99,7 +99,7 @@ def run_opt(opt: str, es_object: Elasticsearch) -> None:
     elif opt == 'd':
         print('Downloading data... This process may take a while')
         scrap_allrecipes_snack_recipes()
-        print(f'{GREEN}[OK]:{RST_COLOR} Data collection dowloaded')
+        print(f'{GREEN}[OK]:{RST_COLOR} Data collection downloaded')
     elif opt == 'i':
         try:
             es_object.ping()
