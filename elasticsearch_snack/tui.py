@@ -127,7 +127,7 @@ def run_search(es_object: Elasticsearch) -> None:
     :param es_object: the Elasticsearch object instance
     :raise SyntaxError: if the option is illegal.
     """
-    possible_opts = ['t', 'd', 'i', 'c', 'a', 'r', 'b']
+    possible_opts = ['t', 'i', 'c', 'a', 'r', 'b']
 
     try:
         es_object.ping()  # Check connection
@@ -258,7 +258,7 @@ def start_tui() -> None:
     """
 
     # The possible options to run by the user
-    possible_opts = ['c', 'i', 's', 'q']
+    possible_opts = ['c', 'd', 'i', 's', 'q']
 
     print(f'{BLUE}Welcome to Elasticsearch Snack!{RST_COLOR}')
 
