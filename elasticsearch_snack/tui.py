@@ -53,7 +53,6 @@ def print_search_menu() -> None:
     print(f'\n{BLUE}***************{RST_COLOR}')
     print('Configuring your search:')
     print(f'    * {CYAN}t{RST_COLOR}: Set title to match')
-    print(f'    * {CYAN}d{RST_COLOR}: Set description keywords to match')
     print(f'    * {CYAN}i{RST_COLOR}: Set ingredients to match')
     print(f'    * {CYAN}c{RST_COLOR}: Set the maximum of calories to filter')
     print(f'    * {CYAN}a{RST_COLOR}: Print the title of all the available '
@@ -90,7 +89,7 @@ def run_opt(opt: str, es_object: Elasticsearch) -> None:
         try:
             print(f'Connecting to the Elasticsearch server using the host '
                   f'\'{ELASTICSEARCH_SERVER_HOST}\'...')
-            es = connect_elasticsearch()
+            _ = connect_elasticsearch()
             print(f'{GREEN}[OK]:{RST_COLOR} Connected to Elasticsearch')
         except ConnectionError:
             print(f'{RED}[ERROR]:{RST_COLOR} Elasticsearch unreachable now. '
@@ -135,7 +134,6 @@ def run_search(es_object: Elasticsearch) -> None:
 
         # Searching components
         title = None
-        description_keywords = []
         ingredients = []
         calories = None
 
@@ -164,12 +162,6 @@ def run_search(es_object: Elasticsearch) -> None:
                 input('Input anything to continue... ')
             elif opt == 't':
                 title = input('Input the desired title to search: ')
-            elif opt == 'd':
-                description_keywords = input('Input the desired keywords to '
-                                             'search in the recipe description '
-                                             'separated by commas: ')
-                description_keywords = \
-                    description_keywords.replace(' ', '').split(',')
             elif opt == 'i':
                 ingredients = input('Input the desired ingredients to search'
                                     'separated by commas: ')
@@ -189,58 +181,34 @@ def run_search(es_object: Elasticsearch) -> None:
                 and this switch is exhaustive with 'possible_opts' list"""
                 raise SyntaxError('Illegal option')
 
-        # Compound the search object
-        match_title = None
-        match_keywords = None
-        match_ingredients = None
-        filter_calories = None
-        if title or description_keywords or ingredients or calories:
+        # Compound the search subelements
+        title_sse = None
+        ingredients_sse = None
+        calories_sse = None
+        if title or ingredients or calories:
             if title:
-                match_title = {'match': {'title': title}}
-            if description_keywords:
-                match_keywords = \
-                    {'bool': {'must': [{'match': {'description': kw}} for
-                                       kw in description_keywords]}}
+                title_sse = {'match': {'title': title}}
             if ingredients:
-                match_ingredients = \
-                    {'bool': {'must': [{'match': {'ingredients': i}} for
-                                       i in ingredients]}}
+                ingredients_sse = \
+                    [{'match': {'ingredients': i}} for i in ingredients]
             if calories:
-                filter_calories = \
+                calories_sse = \
                     {'range': {'calories': {'lte': calories}}}
 
             # Merge the search subelements
-            match_hand = None
-            filter_hand = None
-            match_hand_parts = [match_title, match_keywords, match_ingredients]
-            match_hand_true_parts = [p for p in match_hand_parts if p]
-            n_match_hand_parts = sum([1 for p in match_hand_parts if p])
-            if n_match_hand_parts >= 1:
-                if n_match_hand_parts > 1:
-                    match_hand = {'bool': {'must': match_hand_true_parts}}
-                else:
-                    match_hand = match_hand_true_parts[0]
-            if filter_calories:
-                filter_hand = filter_calories
-
-            # Merge the search elements
-            if match_hand and filter_hand:
-                merged_hands = {'must': match_hand}
-                merged_hands.update({'filter': filter_hand})
-                merged_hands = {'bool': merged_hands}
-                search_object = \
-                    {'query': merged_hands}
-            elif match_hand:
-                search_object = {'query': match_hand}
-            else:
-                search_object = {'query': filter_hand}
+            sses = [title_sse, calories_sse]
+            if ingredients_sse:
+                sses.extend(ingredients_sse)
+            effective_sses = [sse for sse in sses if sse]
+            search_query = \
+                {'query': {'bool': {'must': effective_sses}}}
         else:
             print(f'{RED}[ERROR]:{RST_COLOR} You have to try to search '
                   f'anything. Try again...')
             return
 
         # Run the search
-        res = search(es_object, search_object)
+        res = search(es_object, search_query)
 
         # Access results ignoring metadata
         res = res['hits']['hits']
@@ -253,20 +221,21 @@ def run_search(es_object: Elasticsearch) -> None:
                 print(f"    {i + 1}. {r['_source']['title']}")
                 i += 1
             print(f'{GREEN}<<<<<<<<<<{RST_COLOR}\n')
-            sel_inx = input('Input the index number of a recipe to know more, '
-                            'input \'b\' to go back ')
-            if sel_inx == 'b':
+            selected_idx = input('Input the index number of a recipe to know '
+                                 'more, input \'b\' to go back ')
+            if selected_idx == 'b':
                 return
             else:
                 try:
-                    sel_res = res[int(sel_inx) - 1]
+                    selected_res = res[int(selected_idx) - 1]
                     print(f'\n{GREEN}>>>>>>>>>>{RST_COLOR}')
-                    print(sel_res['_source']['title'])
-                    print(sel_res['_source']['description'])
+                    print(selected_res['_source']['title'])
+                    print(selected_res['_source']['description'])
                     print(f"Ingredients: ")
-                    for i in sel_res['_source']['ingredients']:
+                    for i in selected_res['_source']['ingredients']:
                         print(f'    - {i}')
-                    print(f"Calories: {sel_res['_source']['calories']} kcal")
+                    print(f"Calories: {selected_res['_source']['calories']} "
+                          f"kcal")
                     print(f'\n{GREEN}<<<<<<<<<<{RST_COLOR}')
                     input('Input anything to continue... ')
                 except IndexError or ValueError:
@@ -289,7 +258,7 @@ def start_tui() -> None:
     """
 
     # The possible options to run by the user
-    possible_opts = ['c', 'd', 'i', 's', 'q']
+    possible_opts = ['c', 'i', 's', 'q']
 
     print(f'{BLUE}Welcome to Elasticsearch Snack!{RST_COLOR}')
 
