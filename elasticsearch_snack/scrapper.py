@@ -20,6 +20,7 @@ Allrecipes and prepare it as JSON format to save into Elasticsearch.
 import json
 import re
 from time import sleep
+from typing import Dict
 
 import requests
 from bs4 import BeautifulSoup
@@ -28,12 +29,12 @@ from elasticsearch_snack.properties import ALLRECIPES_SNACKS_PAGE_URL, \
     RECIPES_COLLECTION_FILENAME
 
 
-def scrap_allrecipes_recipe(url: str) -> json:
+def scrap_allrecipes_recipe(url: str) -> Dict:
     """This function scraps a recipe of Allrecipes, given its URL,
     and prepare a JSON file to index in Elasticsearch.
 
     :param url: the URL of the recipe
-    :return: the recipe as JSON
+    :return: the recipe as a JSON-like dictionary
     :raise: ConnectionError, if the connection against Allrecipes crashes
     """
 
@@ -95,7 +96,7 @@ def scrap_allrecipes_recipe(url: str) -> json:
     except Exception:
         raise Exception('Exception while parsing')
     finally:
-        return json.dumps(recipe)
+        return recipe
 
 
 def scrap_allrecipes_snack_recipes() -> None:
