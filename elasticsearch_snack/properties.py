@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ###########################################################
-# Elasticsearch Snack 0.0dev0
+# Elasticsearch Snack 1.0
 #
 # A brief example case indexing recipes with Elasticsearch,
 # Python and Docker containers
