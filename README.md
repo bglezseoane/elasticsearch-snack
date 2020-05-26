@@ -98,3 +98,14 @@ The TUI starts and helps you to go on.
 ## Uninstall
 
 With these installation steps, you only will have to stop the Docker containers and remove the two images to clean everything of your machine.
+
+
+
+## Note about the scrapping
+
+This program scraps online the data collection from Allrecipes.com, so it is obviously sensible to any change on this website. To assert the future working of this project I backup a current version of this scrapped data into the file `data-collection-backup.json`. You can use it in the future simply:
+
+- Rename `data-collection-backup.json` to `data-collection.json`.
+- Restart the client.
+- Do not use the `d` option to scraps the data again.
+- Index or re-index the data with `i` and go on working...
