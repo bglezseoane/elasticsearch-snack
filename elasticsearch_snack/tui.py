@@ -164,9 +164,9 @@ def run_search(es_object: Elasticsearch) -> None:
                 title = input('Input the desired title to search: ')
             elif opt == 'i':
                 ingredients = input('Input the desired ingredients to search'
-                                    'separated by commas: ')
+                                    'separated by \';\': ')
                 ingredients = \
-                    ingredients.replace(' ', '').split(',')
+                    ingredients.split(';')
             elif opt == 'c':
                 calories = input('Input the desired maximum of calories '
                                  'filter: ')
